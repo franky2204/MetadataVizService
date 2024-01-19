@@ -1,0 +1,65 @@
+:root{
+  --lightgrey: #E2E2E2;
+  --darkblue: #19323C;
+  --raspberry: #A93F55;
+  --fontbody: "PT Sans Caption";
+  --fonttitle: "SignPainter";
+}
+
+input[type=checkbox] {accent-color: var(--raspberry);}
+input {accent-color: var(--raspberry);}
+
+body{
+  background-color: var(--lightgrey);
+  margin: 0;
+  font-family: var(--fontbody);
+  font-size: 18px;
+}
+
+h1{
+  font-family: var(--fonttitle);
+  font-size:35px;
+  color: var(--lightgrey)
+}
+
+
+.container-fluid{
+  background-color: var(--lightgrey);
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.container{
+  background-color: var(--lightgrey);
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.row{
+  margin:0;
+}
+
+.well{
+  background: white;
+  padding: 3%;
+  border-radius: 6px;
+  box-shadow: 6px 6px 12px #C5C5C5;
+  overflow: hidden;
+}
+
+.headerQBio{
+  background-color: var(--darkblue);
+  top: 0;
+  left: 0;
+  margin-bottom: 3em;
+  width: 100%;
+  height: 10%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  text-align: center;
+  box-shadow: 6px 6px 12px #C5C5C5;
+}
+
