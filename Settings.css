@@ -2,26 +2,37 @@
   --lightgrey: #E2E2E2;
   --darkblue: #19323C;
   --raspberry: #A93F55;
-  --fontbody: "PT Sans Caption";
-  --fonttitle: "SignPainter";
+  --fontbody: "Oriya Sangam MN";
+  --fontlabel: "PT Sans";
+  --fontaccent: "SignPainter";
+  --fontmono: "PT Mono";
 }
 
 input[type=checkbox] {accent-color: var(--raspberry);}
+input[type=label] {font-family:var(--fontlabel)}
 input {accent-color: var(--raspberry);}
+
+.label-default {
+  background-color: var(--raspberry);
+}
 
 body{
   background-color: var(--lightgrey);
   margin: 0;
-  font-family: var(--fontbody);
   font-size: 18px;
 }
 
 h1{
-  font-family: var(--fonttitle);
+  font-family: var(--fontaccent);
   font-size:35px;
   color: var(--lightgrey)
 }
 
+h2{
+  font-family: var(--fontaccent);
+  font-size:35px;
+  color: var(--lightgrey)
+}
 
 .container-fluid{
   background-color: var(--lightgrey);
@@ -39,7 +50,9 @@ h1{
 
 .row{
   margin:0;
+  justify-content: space-between;
 }
+
 
 .well{
   background: white;
@@ -47,6 +60,8 @@ h1{
   border-radius: 6px;
   box-shadow: 6px 6px 12px #C5C5C5;
   overflow: hidden;
+  width: 90%;
+  justify-content: space-between;
 }
 
 .headerQBio{
@@ -62,4 +77,3 @@ h1{
   text-align: center;
   box-shadow: 6px 6px 12px #C5C5C5;
 }
-

@@ -11,7 +11,7 @@ library(bslib)
 library(corrr)
 
 setwd("/Users/danielavolpatto/Documents/Università/dottorato/Interfaccia grafica")
-#source("df_Prova.R")
+source("df_Prova.R")
 
 classes<-factor(classes,levels = c("character","logic","factor","numeric"))
 names(classes)<-variables

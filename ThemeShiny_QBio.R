@@ -1,3 +1,4 @@
+
 theme_QBio<-list(includeCSS("Settings.css"),
                  includeCSS("Components.css"))
                                                
@@ -24,3 +25,10 @@ headerPanel<-function (title="", windowTitle = title)
   )
 }
 
+mainPanel<-function (..., width = 8) {
+  div(class = paste0("col-sm-", width), tags$form(role = "main",class = "well", ...))
+}
+
+sidebarPanel<-function (..., width = 4) {
+  div(class = paste0("col-sm-", width), role = "complementary", ...)
+}
