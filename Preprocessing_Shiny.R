@@ -64,19 +64,16 @@ ui <- fluidPage(
               materialSwitch(
                 inputId = "header",
                 label = "Header",
-                #inline=TRUE,
-                #right=TRUE,
                 value = TRUE,
                 status = "default"
               ),
               textInput("sep",
                         "Separator",
-                        value = ",",
+                        value = " ",
                         width = "100px"
               ),
               prettyRadioButtons("quote",
                            "Quote",
-                           #inline = TRUE,
                            status = "default",
                            choices = c(
                              None = "",
@@ -117,9 +114,12 @@ ui <- fluidPage(
       column(
         fluidRow(
           wellPanel(
-             plotOutput(outputId = "distPlot"),
-            # downloadButton("downloadData", "Download"),
-             actionButton("refresh","Other",class="red-button")
+            fluidRow(downloadButton("downloadPlot","",style = "margin-top:1em;
+                                                        margin-right:1em;
+                                                        float: right;")),
+            fluidRow(plotOutput(outputId = "distPlot")),
+            fluidRow(actionButton("refresh","Other",class="red-button",style ="margin:1em;"))
+            
           ),
           wellPanel(
             tableOutput(outputId = "Table"),
@@ -162,10 +162,10 @@ server<-function(input,output, session){
       req(input$file)
       df <- NULL
       ext <- tools::file_ext(input$file$name)
-      if (ext %in% c("csv", "txt", "tsv") && input$manually == 0) {
+      if (ext %in% c("csv", "tsv") && input$manually == 0) {
         read_fun <- switch(ext,
                            csv = read.csv,
-                           txt = read.table,
+                           #txt = read.table,
                            tsv = read.table,
                            default = read.table
         )
@@ -475,6 +475,7 @@ server<-function(input,output, session){
           count(.data[[var1]],.data[[var2]])%>%
           pivot_wider(names_from = var2,values_from = n)%>%
           column_to_rownames(var1)
+        
       }
       else if(rv$colTypes[var1]=="logic" &
               rv$colTypes[var2]=="factor" & !rv$ord_factor[var2]){
@@ -618,6 +619,17 @@ server<-function(input,output, session){
     return(rv$table)
   }, rownames = TRUE)
   
+  output$downloadPlot <- downloadHandler(
+       filename = function() {
+         paste('plot-',paste(input$var,collapse="_"), '.png', sep='')
+       },
+       content = function(con) {
+         ggsave(
+           con,
+           plot = rv$plot[[numbers::mod(rv$plot_n, length(rv$plot))+1]],
+         )
+       }
+     )
   
   session$onSessionEnded(function() {
     stopApp()
