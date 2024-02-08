@@ -274,16 +274,17 @@ server<-function(input,output, session){
            showModal(
              modalDialog(
                bucket_list(
-                 header = "Drag the items in any desired bucket",
+                 header = "Do the factors have a preferential order? (i.e. they are time steps) \n
+                 if so drag them in the right bucket in proper order.",
                  group_name = paste0("bucket_ord_", last_input),
                  orientation = "horizontal",
                  add_rank_list(
-                   text = "Drag from here",
+                   text = "Unordered factor detected",
                    labels = levels_non_ord,
                    input_id = paste0("factor_nonord_", i)
                  ),
                  add_rank_list(
-                   text = "to here",
+                   text = "Correct order",
                    labels = levels_ord,
                    input_id = paste0("factor_ord_", i)
                  )
