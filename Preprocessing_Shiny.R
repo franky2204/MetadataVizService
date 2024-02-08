@@ -44,7 +44,8 @@ ui <- fluidPage(
                 accept = c(
                   "text/csv",
                   "text/comma-separated-values,text/plain",
-                  ".csv"
+                  ".csv",
+                  ".tsv"
                 )
       ),
       align="center"
