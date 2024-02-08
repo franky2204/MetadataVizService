@@ -1,4 +1,4 @@
-barplot_logic_logic<-function(df,var1,var2){
+barplot_logic_logic<-function(df,var1,var2,palettes){
   ggplot(df)+
     geom_bar(aes(y=.data[[var1]],
                  fill=.data[[var2]]))+
@@ -11,7 +11,7 @@ barplot_logic_logic<-function(df,var1,var2){
     )
 }
 
-barplot_logic_factnonord_stack<-function(df,var1,var2){
+barplot_logic_factnonord_stack<-function(df,var1,var2,palettes){
   ggplot(df)+
     geom_bar(aes(y=.data[[var1]],
                  fill=.data[[var2]]),
@@ -25,7 +25,7 @@ barplot_logic_factnonord_stack<-function(df,var1,var2){
     )
 }
 
-barplot_logic_factnonord_dodge<-function(df,var1,var2){
+barplot_logic_factnonord_dodge<-function(df,var1,var2,palettes){
   ggplot(df)+
     geom_bar(aes(y=.data[[var1]],
                  fill=.data[[var2]]),
@@ -39,7 +39,7 @@ barplot_logic_factnonord_dodge<-function(df,var1,var2){
     )
 }
 
-barplot_logic_factord_dodge<-function(df,var1,var2){
+barplot_logic_factord_dodge<-function(df,var1,var2,palettes){
   ggplot(df)+
     geom_bar(aes(x=.data[[var1]],
                  fill=.data[[var2]]),
@@ -53,7 +53,7 @@ barplot_logic_factord_dodge<-function(df,var1,var2){
     )
 }
 
-barplot_logic_factord_stack<-function(df,var1,var2){
+barplot_logic_factord_stack<-function(df,var1,var2,palettes){
   ggplot(df)+
     geom_bar(aes(y=.data[[var1]],
                  fill=.data[[var2]]),
@@ -67,7 +67,7 @@ barplot_logic_factord_stack<-function(df,var1,var2){
     )
 }
 
-density_logic_num<-function(df,var1,var2){
+density_logic_num<-function(df,var1,var2,palettes){
   ggplot(df)+
     geom_density(aes(x=.data[[var2]],
                      fill=.data[[var1]],
@@ -84,7 +84,7 @@ density_logic_num<-function(df,var1,var2){
     )
 }
 
-boxplot_logic_num<-function(df,var1,var2){
+boxplot_logic_num<-function(df,var1,var2,palettes){
     ggplot(df)+
     geom_boxplot(aes(y=.data[[var2]],
                      x=.data[[var1]]),
@@ -101,7 +101,7 @@ boxplot_logic_num<-function(df,var1,var2){
     )
 }
 
-histogram_logic_num_identity<-function(df,var1,var2){
+histogram_logic_num_identity<-function(df,var1,var2,palettes){
   ggplot(df)+
     geom_histogram(aes(x=.data[[var2]],
                      fill=.data[[var1]],
@@ -120,7 +120,7 @@ histogram_logic_num_identity<-function(df,var1,var2){
     )
 }
 
-histogram_logic_num_stack<-function(df,var1,var2){
+histogram_logic_num_stack<-function(df,var1,var2,palettes){
   ggplot(df)+
     geom_histogram(aes(x=.data[[var2]],
                        fill=.data[[var1]],
@@ -139,7 +139,7 @@ histogram_logic_num_stack<-function(df,var1,var2){
     )
 }
 
-barplot_factornonord_factornonord<-function(df,var1,var2){
+barplot_factornonord_factornonord<-function(df,var1,var2,palettes){
   ggplot(df)+
     geom_bar(aes(y=.data[[var1]],
                  fill=.data[[var2]]))+
@@ -152,7 +152,7 @@ barplot_factornonord_factornonord<-function(df,var1,var2){
     )
 }
 
-barplot_factornonord_factorord<-function(df,var1,var2){
+barplot_factornonord_factorord<-function(df,var1,var2,palettes){
   ggplot(df)+
     geom_bar(aes(x=.data[[var2]],
                  fill=.data[[var1]]),
@@ -166,7 +166,7 @@ barplot_factornonord_factorord<-function(df,var1,var2){
     )
 }
 
-barplot_factorord_factornonord<-function(df,var1,var2){
+barplot_factorord_factornonord<-function(df,var1,var2,palettes){
   ggplot(df)+
     geom_bar(aes(y=.data[[var1]],
                  fill=.data[[var2]]),
@@ -180,7 +180,7 @@ barplot_factorord_factornonord<-function(df,var1,var2){
     )
 }
 
-density_factornonord_num<-function(df,var1,var2){
+density_factornonord_num<-function(df,var1,var2,palettes){
   ggplot(df)+
     geom_density(aes(x=.data[[var2]],
                      color=.data[[var1]]),
@@ -195,7 +195,7 @@ density_factornonord_num<-function(df,var1,var2){
     )
 }
 
-histogram_factornonord_num_identity<-function(df,var1,var2){
+histogram_factornonord_num_identity<-function(df,var1,var2,palettes){
   ggplot(df)+
     geom_histogram(aes(x=.data[[var2]],
                        fill=.data[[var1]],
@@ -214,7 +214,7 @@ histogram_factornonord_num_identity<-function(df,var1,var2){
     )
 }
 
-histogram_factornonord_num_stack<-function(df,var1,var2){
+histogram_factornonord_num_stack<-function(df,var1,var2,palettes){
   ggplot(df)+
     geom_histogram(aes(x=.data[[var2]],
                        fill=.data[[var1]],
@@ -233,7 +233,7 @@ histogram_factornonord_num_stack<-function(df,var1,var2){
     )
 }
 
-boxplot_factornonord_num<-function(df,var1,var2){
+boxplot_factornonord_num<-function(df,var1,var2,palettes){
   ggplot(df)+
     geom_boxplot(aes(x=.data[[var2]],
                      y=.data[[var1]]),
@@ -250,7 +250,7 @@ boxplot_factornonord_num<-function(df,var1,var2){
 
 barplot_factord_factord_dodge<-barplot_logic_factord_dodge
   
-barplot_factord_factord_stack<-function(df,var1,var2){
+barplot_factord_factord_stack<-function(df,var1,var2,palettes){
   ggplot(df)+
     geom_bar(aes(x=.data[[var1]],
                  fill=.data[[var2]]),
@@ -264,7 +264,7 @@ barplot_factord_factord_stack<-function(df,var1,var2){
     )
 }
 
-density_factorord_num<-function(df,var1,var2){
+density_factorord_num<-function(df,var1,var2,palettes){
   ggplot(df)+
     geom_density_ridges(aes(x=.data[[var2]],
                             y=.data[[var1]],
@@ -284,7 +284,7 @@ density_factorord_num<-function(df,var1,var2){
     )
 }
 
-boxplot_factorord_num<-function(df,var1,var2){
+boxplot_factorord_num<-function(df,var1,var2,palettes){
   ggplot(df)+
     geom_boxplot(aes(y=.data[[var2]],
                      x=.data[[var1]],
@@ -303,7 +303,7 @@ boxplot_factorord_num<-function(df,var1,var2){
     )
 }
 
-scatter_num_num<-function(df,var1,var2){
+scatter_num_num<-function(df,var1,var2,palettes){
   ggplot(df)+
     geom_point(aes(x=.data[[var1]],
                    y=.data[[var2]]))+

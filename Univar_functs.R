@@ -7,7 +7,7 @@ my_theme<-theme_void()+
   )
 
 
-barplot_logic<-function(df,var){
+barplot_logic<-function(df,var,palettes){
   ggplot(df)+
     geom_bar(aes(x=.data[[var]]),
              fill=palettes[var][[1]])+
@@ -18,7 +18,7 @@ barplot_logic<-function(df,var){
     )
 }
 
-pie_logic<-function(df,var){
+pie_logic<-function(df,var,palettes){
   ggplot(df%>%
            count(.data[[var]])) +
     geom_bar(aes(x="",
@@ -34,7 +34,7 @@ pie_logic<-function(df,var){
     )
 }
 
-waffle_factor_nonord<-function(df,var){
+waffle_factor_nonord<-function(df,var,palettes,ndata,type_facets){
   ggplot(df%>%count(.data[[var]]))+
     geom_waffle(
       aes(values=n,
@@ -51,7 +51,7 @@ waffle_factor_nonord<-function(df,var){
     )
 }
 
-barplot_factor_nonord<-function(df,var){
+barplot_factor_nonord<-function(df,var,palettes,type_facets){
   ggplot(df)+
     geom_bar(
       aes(y=.data[[var]],
@@ -66,7 +66,7 @@ barplot_factor_nonord<-function(df,var){
     )
 }
 
-barplot_factor_ord_x<-function(df,var){
+barplot_factor_ord_x<-function(df,var,palettes){
   ggplot(df)+
     geom_bar(aes(x=.data[[var]],
                  fill=.data[[var]]))+
@@ -78,7 +78,7 @@ barplot_factor_ord_x<-function(df,var){
     )
 }
 
-barplot_factor_ord_stack<-function(df,var){
+barplot_factor_ord_stack<-function(df,var,palettes){
   ggplot(df)+
     geom_bar(
       aes(x=0,
@@ -94,7 +94,7 @@ barplot_factor_ord_stack<-function(df,var){
     )
 }
 
-hist_numeric<-function(df,var){
+hist_numeric<-function(df,var,palettes){
   ggplot(df)+
     geom_histogram(aes(x=.data[[var]]))+
     my_theme+
@@ -105,7 +105,7 @@ hist_numeric<-function(df,var){
     )
 }
 
-density_numeric<-function(df,var){
+density_numeric<-function(df,var,palettes){
   ggplot(df)+
     geom_density(aes(x=.data[[var]]))+
     my_theme+
@@ -114,7 +114,7 @@ density_numeric<-function(df,var){
     )
 }
 
-boxplot_numeric<-function(df,var){
+boxplot_numeric<-function(df,var,palettes){
   ggplot(df)+
     geom_boxplot(aes(x=.data[[var]]))+
     my_theme+
