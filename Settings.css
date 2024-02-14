@@ -3,8 +3,7 @@
   --darkblue: #19323C;
   --raspberry: #A93F55;
   --fontbody: "Oriya Sangam MN";
-  --fontlabel1: "PT Sans";
-  --fontlabel: "DroidSans";
+  --fontlabel: "PT Sans";
   --fontaccent: "SignPainter";
   --fontmono: "PT Mono";
 }
@@ -61,7 +60,7 @@ h2{
   border-radius: 6px;
   box-shadow: 6px 6px 12px #C5C5C5;
   overflow: hidden;
-  width: 90%;
+  width: 100%;
   justify-content: space-between;
 }
 
