@@ -28,27 +28,25 @@ ui <- fluidPage(
     )
   ),
   theme_QBio,
-  # includeCSS("bootstrap.css"),
-  # includeCSS("bootstrap-icons.min.css"),
-  # includeCSS("prism-okaidia.css"),
-  # includeCSS("custom.min.css"),
-  # theme=shinytheme("cerulean"),
   headerPanel("Preprocessing"),
   conditionalPanel(
     "!output.AllAlright",
     fluidRow(
-      fileInput("file", "Upload your tile",
+      fileInput("file", "Upload your file",
                 multiple = FALSE,
                 accept = c(
-                  "text/csv",
-                  "text/comma-separated-values,text/plain",
+                  ".txt",
                   ".csv",
                   ".tsv"
                 )
       ),
       align="center"
     ),
-    conditionalPanel(
+    conditionalPanel("!output.fileUploaded",
+                     p("It is possible to upload table files with separators of your choice in .csv, .tsv or .txt format"),
+    align="center"
+  ),
+  conditionalPanel(
       "output.fileUploaded",
       fluidRow(
         column(
