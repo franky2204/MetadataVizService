@@ -1,18 +1,6 @@
-library(tidyverse)
-library(shiny)
-library(readr)
-library(DT)
-library(shinyWidgets)
-library(shinyjs)
-#library(shinyBS)
-library(ggridges)
-library(shinyalert)
-library(sortable)
-library(waffle)
-# library(numbers)
+setwd(".")
 
-setwd("/Users/danielavolpatto/Documents/Università/dottorato/Interfaccia grafica")
-
+source("Libraries.R")
 source("functions.R")
 source("ThemeShiny_QBio.R")
 source("Palettes.R")
@@ -22,6 +10,8 @@ source("Bivar_functs.R")
 source("server.R")
 source("ui.R")
 
+options(shiny.port = 8180)
+options(shiny.host = "0.0.0.0")
 
 shinyApp(ui, server)
 

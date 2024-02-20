@@ -1,4 +1,3 @@
-
 theme_QBio<-list(includeCSS("Settings.css"),
                  includeCSS("Components.css"))
                                                

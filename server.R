@@ -1,4 +1,5 @@
 server<-function(input,output, session){
+
   # definition of reactive variables
   rv <- reactiveValues(
     AllAlright =FALSE,
