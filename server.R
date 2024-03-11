@@ -1,5 +1,5 @@
 server<-function(input,output, session){
-
+  
   # definition of reactive variables
   rv <- reactiveValues(
     AllAlright =FALSE,
@@ -33,20 +33,21 @@ server<-function(input,output, session){
       req(input$file)
       df <- NULL
       ext <- tools::file_ext(input$file$name)
-      if (ext == "csv" && input$manually == 0) {
+      if (ext == "csv" && input$manually%%2 == 0) {
         
         df <- read.csv(input$file$datapath,
                        header = TRUE,
                        fill = TRUE,
                        stringsAsFactors = FALSE
         )
+        df[df==""]<-NA
         rv$df_pre <- df
         rv$variables <- colnames(df)
         rv$ncol <- ncol(df)
         rv$levels <- vector("list", ncol(df))
         rv$colTypes <- rep("", ncol(df))
       }
-      else if (ext == "tsv" && input$manually == 0) {
+      else if (ext == "tsv" && input$manually%%2 == 0) {
         
         df <- read.table(input$file$datapath,
                          header = TRUE,
@@ -54,6 +55,8 @@ server<-function(input,output, session){
                          fill = TRUE,
                          stringsAsFactors = FALSE
         )
+        df[df==""]<-NA
+        
         rv$df_pre <- df
         rv$variables <- colnames(df)
         rv$ncol <- ncol(df)
@@ -68,6 +71,8 @@ server<-function(input,output, session){
                            sep = input$sep,
                            quote = input$quote
             )
+            df[df==""]<-NA
+            
             rv$df_pre <- df
             rv$variables <- colnames(df)
             rv$ncol <- ncol(df)
@@ -121,7 +126,7 @@ server<-function(input,output, session){
                     label = paste(columnNames[i],": ",sep=""),
                     choices = c("", "character", "numeric", "factor"),
                     selected = rv$colTypes[i]
-
+                    
         )
       })
     )
@@ -136,75 +141,75 @@ server<-function(input,output, session){
     ),
     {
       if(req(!rv$AllAlright)){
-      
-      req(input$file)
-      req(input$changed)
-      last_input <- input$changed
-      i<-which(last_input==sapply(1:rv$ncol,
-                                  function(i) {
-                                    return(paste0("colType_", i))
-                                  }
-      )
-      )
-      if(length(i)!=0){
-        colTypeInput <-input[[last_input]]
-        rv$colTypes[i]<-colTypeInput
-        if (colTypeInput == "factor") {
-          var<-rv$variables[i]
-          n_fact<-rv$df_pre%>%pull(all_of(var))%>%unique()%>%length()
-          if(n_fact<=10){
-            levels_ord <- rv$levels[[i]]
-            if (is.null(levels_ord)) {
-              levels_non_ord <- unique(na.omit(rv$df_pre[, i]))
-            }
-            else {
-              levels_non_ord <- NULL
-            }
-            showModal(
-              modalDialog(
-                bucket_list(
-                  header = "Do the factors have a preferential order? (i.e. they are time steps) \n
+        
+        req(input$file)
+        req(input$changed)
+        last_input <- input$changed
+        i<-which(last_input==sapply(1:rv$ncol,
+                                    function(i) {
+                                      return(paste0("colType_", i))
+                                    }
+        )
+        )
+        if(length(i)!=0){
+          colTypeInput <-input[[last_input]]
+          rv$colTypes[i]<-colTypeInput
+          if (colTypeInput == "factor") {
+            var<-rv$variables[i]
+            n_fact<-rv$df_pre%>%pull(all_of(var))%>%unique()%>%length()
+            if(n_fact<=10){
+              levels_ord <- rv$levels[[i]]
+              if (is.null(levels_ord)) {
+                levels_non_ord <- unique(na.omit(rv$df_pre[, i]))
+              }
+              else {
+                levels_non_ord <- NULL
+              }
+              showModal(
+                modalDialog(
+                  bucket_list(
+                    header = "Do the factors have a preferential order? (i.e. they are time steps) \n
                  if so drag them in the right bucket in proper order.",
-                  group_name = paste0("bucket_ord_", last_input),
-                  orientation = "horizontal",
-                  add_rank_list(
-                    text = "Unordered factor detected",
-                    labels = levels_non_ord,
-                    input_id = paste0("factor_nonord_", i)
+                    group_name = paste0("bucket_ord_", last_input),
+                    orientation = "horizontal",
+                    add_rank_list(
+                      text = "Unordered factor detected",
+                      labels = levels_non_ord,
+                      input_id = paste0("factor_nonord_", i)
+                    ),
+                    add_rank_list(
+                      text = "Correct order",
+                      labels = levels_ord,
+                      input_id = paste0("factor_ord_", i)
+                    )
                   ),
-                  add_rank_list(
-                    text = "Correct order",
-                    labels = levels_ord,
-                    input_id = paste0("factor_ord_", i)
+                  footer = tagList(
+                    shinyjs::useShinyjs(),
+                    actionButton(paste0("submit_nonord_", i),"Order is not meaningful"),
+                    actionButton(paste0("submit_ord_", i), "Save with this order"),
                   )
-                ),
-                footer = tagList(
-                  shinyjs::useShinyjs(),
-                  actionButton(paste0("submit_nonord_", i),"Order is not meaningful"),
-                  actionButton(paste0("submit_ord_", i), "Save with this order"),
                 )
               )
-            )
-          }
-          else{
-            shinyalert(title = "Not quite the choice",
-                       text = paste("It appears that your column contains ",
-                                    n_fact,
-                                    " different levels when considered as a factor, whereas we can only handle a maximum of 10. \n
+            }
+            else{
+              shinyalert(title = "Not quite the choice",
+                         text = paste("It appears that your column contains ",
+                                      n_fact,
+                                      " different levels when considered as a factor, whereas we can only handle a maximum of 10. \n
                                     You may have inadvertently selected the wrong column type. However, if this isn't the case and the number of values doesn't align with your expectations, consider reviewing your table for any discrepancies and reloading it. \n
                                     Please bear in mind that the system distinguishes values even if they differ only by a capitalization, spacing, or a single letter.",
-                                    collapse=""),
-                       confirmButtonCol = "#19323C",
-                       imageHeight = "200",
-                       imageWidth = "300",
-                       size = "m",
-                       imageUrl = "https://i.kym-cdn.com/entries/icons/original/000/018/489/nick-young-confused-face-300x256-nqlyaa.jpg")
-            rv$colTypes[i]<-""
+                                      collapse=""),
+                         confirmButtonCol = "#19323C",
+                         imageHeight = "200",
+                         imageWidth = "300",
+                         size = "m",
+                         imageUrl = "https://i.kym-cdn.com/entries/icons/original/000/018/489/nick-young-confused-face-300x256-nqlyaa.jpg")
+              rv$colTypes[i]<-""
             }
+          }
         }
       }
-    }
-      })
+    })
   
   # salva ordine factor
   observeEvent(lapply(1:req(rv$ncol),
@@ -245,7 +250,7 @@ server<-function(input,output, session){
     )
     )
     if(length(i)!=0){
-      my_list <- replace(rv$levels, i, NULL)
+      rv$levels[i]<-list(NULL)
       removeModal()
     }
   }})
@@ -355,7 +360,7 @@ server<-function(input,output, session){
   output$AllAlright<-reactive({
     return(rv$AllAlright)
   })
-
+  
   outputOptions(output,
                 "AllAlright",
                 suspendWhenHidden = FALSE
@@ -636,12 +641,12 @@ server<-function(input,output, session){
   output$distPlot <- renderPlot({
     return(rv$plot[[numbers::mod(rv$plot_n, length(rv$plot))+1]])
   },bg="transparent")
-
+  
   # printa tabella
   output$Table <- renderTable({
     return(rv$table)
   }, rownames = TRUE)
-
+  
   output$downloadPlot <- downloadHandler(
     filename = function() {
       paste('plot-',paste(input$var,collapse="_"), '.png', sep='')

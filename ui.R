@@ -17,7 +17,8 @@ ui <- fluidPage(
         });"
     )
   ),
-  theme_QBio,
+  #theme_QBio,
+  #includeCSS("prova-theme.css"),
   headerPanel("Preprocessing"),
   conditionalPanel(
     "!output.AllAlright",
@@ -46,11 +47,11 @@ ui <- fluidPage(
                        style = "margin:1em;"
           ),
           conditionalPanel(
-            condition = "input.manually !=0",
+            condition = "input.manually%2 !=0",
             materialSwitch(
               inputId = "header",
               label = "Header",
-              value = TRUE,
+              value = FALSE,
               status = "default"
             ),
             textInput("sep",
@@ -61,13 +62,14 @@ ui <- fluidPage(
             ),
             prettyRadioButtons("quote",
                                "Quote",
-                               status = "default",
                                choices = c(
                                  None = "",
                                  "Double Quote" = '"',
                                  "Single Quote" = "'"
                                ),
-                               selected = '"'
+                               selected = '"',
+                               status = "danger"
+                               
             )
           ),
           uiOutput("colTypeInputs"),

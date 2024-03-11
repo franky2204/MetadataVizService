@@ -9,7 +9,7 @@ my_theme<-theme_void()+
 
 barplot_logic<-function(df,var,palettes){
   ggplot(df)+
-    geom_bar(aes(x=var),
+    geom_bar(aes(x=.data[[var]]),
              fill=palettes[var][[1]])+
     coord_flip()+
     my_theme+
