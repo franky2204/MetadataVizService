@@ -1,4 +1,5 @@
 if(!require("devtools")) install.packages("devtools", dependencies = TRUE)
+if(!require("shinythemes")) install.packages("devtools", dependencies = TRUE)
 if(!require("tidyverse")) install.packages("tidyverse", dependencies = TRUE)
 if(!require("shiny")) install.packages("shiny", dependencies = TRUE)
 if(!require("readr")) install.packages("readr", dependencies = TRUE)

@@ -17,33 +17,49 @@ ui <- fluidPage(
         });"
     )
   ),
-  #theme_QBio,
-  #includeCSS("prova-theme.css"),
+  #theme="Cerulean",
+  theme_QBio,
+  #includeCSS("bootstrap.css"),
   headerPanel("Preprocessing"),
   conditionalPanel(
     "!output.AllAlright",
-    fluidRow(
-      fileInput("file", "Upload your file",
-                multiple = FALSE,
-                accept = c(
-                  ".txt",
-                  ".csv",
-                  ".tsv"
-                )
-      ),
-      align="center"
-    ),
+    
     conditionalPanel("!output.fileUploaded",
+                     fluidRow(
+                       fileInput("file", "Upload your file",
+                                 multiple = FALSE,
+                                 accept = c(
+                                   ".txt",
+                                   ".csv",
+                                   ".tsv"
+                                 )
+                       ),
+                       align="center",
+                       style = "margin-top: 10%;"
+                     ),
                      p("It is possible to upload table files with separators of your choice in .csv, .tsv or .txt format"),
-    align="center"
+    align="center",
+    style="width: 80%; margin-left: 10%; margin-right: 10%;"
   ),
   conditionalPanel(
       "output.fileUploaded",
       fluidRow(
+        fileInput("file", "Upload your file",
+                  multiple = FALSE,
+                  accept = c(
+                    ".txt",
+                    ".csv",
+                    ".tsv"
+                  )
+        ),
+        align="center",
+        style = "margin-top: 2%;"
+      ),
+      fluidRow(
         column(
           actionButton("manually",
                        label = "Manually adjust",
-                       styleclass = "secondary",
+                       class = "btn btn-secondary",
                        style = "margin:1em;"
           ),
           conditionalPanel(
@@ -99,14 +115,12 @@ ui <- fluidPage(
     )
   ),
   conditionalPanel(
-    #"output.AllAlright",
     "input.load!=0 && output.AllAlright",
-    h1("Preprocessing"),
+    #h1("Preprocessing"),
     fluidRow(
       column(
         uiOutput("variables_input"),
-        #offset = 1,
-        width = 3,
+        width = 2,
         style = "margin:1em;"
       ),
       column(
@@ -123,10 +137,16 @@ ui <- fluidPage(
             tableOutput(outputId = "Table"),
             class = "fit-to-content",
             style="max-width:100%;overflow-x: scroll"
+          ),
+          wellPanel(
+           # verbatimTextOutput()
+          ),
+          wellPanel(
+            p("Altre cose altre")
           )
         ),
-        width = 7,
-        style = "margin:1em;"
+        width = 8,
+        #style = "margin:1em;"
       )
     )
   )

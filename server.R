@@ -3,6 +3,7 @@ server<-function(input,output, session){
   # definition of reactive variables
   rv <- reactiveValues(
     AllAlright =FALSE,
+    fileUploaded=FALSE,
     df_pre = NULL,
     df_post = NULL,
     variables = NULL,
@@ -636,6 +637,8 @@ server<-function(input,output, session){
     }
     else{rv$plot<-NULL}
   })
+  
+  # plotta descrizione
   
   # plotta grafici
   output$distPlot <- renderPlot({
