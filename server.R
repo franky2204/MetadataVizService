@@ -28,16 +28,15 @@ server<-function(input,output, session){
   )
   
   # load del dataframe
-  observeEvent(list(input$file,input$header,input$sep,input$quote),{
+  observeEvent(list(input$file,input$file1,input$header,input$sep,input$quote),{
     if(req(!rv$AllAlright)){
-      
       req(input$file)
       df <- NULL
       ext <- tools::file_ext(input$file$name)
       if (ext == "csv" && input$manually%%2 == 0) {
         
         df <- read.csv(input$file$datapath,
-                       header = TRUE,
+                       header = FALSE,
                        fill = TRUE,
                        stringsAsFactors = FALSE
         )
@@ -51,8 +50,8 @@ server<-function(input,output, session){
       else if (ext == "tsv" && input$manually%%2 == 0) {
         
         df <- read.table(input$file$datapath,
-                         header = TRUE,
-                         sep="\t",
+                         header = FALSE,
+                         #delim="\t",
                          fill = TRUE,
                          stringsAsFactors = FALSE
         )
@@ -95,8 +94,74 @@ server<-function(input,output, session){
           }
         )
       }
+      req(input$file1)
+      df <- NULL
+      ext <- tools::file_ext(input$file$name)
+      if (ext == "csv" && input$manually%%2 == 0) {
+        
+        df <- read.csv(input$file1$datapath,
+                       header = FALSE,
+                       fill = TRUE,
+                       stringsAsFactors = FALSE
+        )
+        df[df==""]<-NA
+        rv$df_pre <- df
+        rv$variables <- colnames(df)
+        rv$ncol <- ncol(df)
+        rv$levels <- vector("list", ncol(df))
+        rv$colTypes <- rep("", ncol(df))
+      }
+      else if (ext == "tsv" && input$manually%%2 == 0) {
+        
+        df <- read.table(input$file1$datapath,
+                         header = FALSE,
+                         #delim="\t",
+                         fill = TRUE,
+                         stringsAsFactors = FALSE
+        )
+        df[df==""]<-NA
+        
+        rv$df_pre <- df
+        rv$variables <- colnames(df)
+        rv$ncol <- ncol(df)
+        rv$levels <- vector("list", ncol(df))
+        rv$colTypes <- rep("", ncol(df))
+      }
+      else {
+        tryCatch(
+          {
+            df<-read.delim(input$file1$datapath,
+                           header = input$header,
+                           sep = input$sep,
+                           quote = input$quote
+            )
+            df[df==""]<-NA
+            
+            rv$df_pre <- df
+            rv$variables <- colnames(df)
+            rv$ncol <- ncol(df)
+            rv$levels <- vector("list", ncol(df))
+            rv$colTypes <- rep("", ncol(df))
+          },
+          warning = function(cond) {
+            message("Here's the original error message:")
+            message(conditionMessage(cond))
+            df<-read.table(input$file$datapath,
+                           header = input$header,
+                           sep = input$sep,
+                           quote = input$quote
+            )
+          },
+          error = function(cond) {
+            message("There is something wrong:")
+            message(conditionMessage(cond))
+          }
+        )
+      }
     }
   })
+  
+  observeEvent(input$changed,{print(input$changed)})
   
   # show tabella
   output$df_table <- renderDataTable(DT::datatable(rv$df_pre,
@@ -110,9 +175,10 @@ server<-function(input,output, session){
   observeEvent(input$colnames, {
     if(req(!rv$AllAlright)){
       req(input$file)
-      req(input$colnames)
-      rv$variables <- input$colnames
-      names(rv$colTypes) <- rv$variables
+      if(all(req(input$colnames)!="")){
+        rv$variables <- input$colnames
+        names(rv$colTypes) <- rv$variables
+      }
     }
   })
   
@@ -219,7 +285,6 @@ server<-function(input,output, session){
                       }
   ),
   {if(req(!rv$AllAlright)){
-    
     req(input$file)
     last_input <- input$changed
     i<-which(last_input==sapply(1:rv$ncol,
@@ -228,7 +293,7 @@ server<-function(input,output, session){
                                 }
     )
     )
-    if(length(i)!=0){
+    if(length(i)!=0 & req(input[[paste0("submit_ord_", i)]])!=0){
       rv$levels[[i]] <- req(input[[paste0("factor_ord_", i)]])
       removeModal()
     }
@@ -328,35 +393,38 @@ server<-function(input,output, session){
                  imageWidth = "300",
                  confirmButtonCol = "#19323C")
       rv$AllAlright<-FALSE
+      rv$levels[!rv$ord_factor]<-list(NULL)
+      rv$colTypes[rv$colTypes=="logic"]<-"factor"
+      rv$colTypes[names(wrong_type)]<-""
     }
     else{
       rv$AllAlright<-TRUE
-    }
-    
-    rv$colTypes <- factor(rv$colTypes,
-                          levels = c("character", "logic", "factor", "numeric")
-    )
-    
-    
-    palettes_factord<- mapply(moma.colors,
-                              possible_palettes_gradient[1:sum(rv$ord_factor)],
-                              n=rv$ntype_ord,
-                              SIMPLIFY = FALSE,
-                              USE.NAMES = FALSE)
-    names(palettes_factord)<-names(rv$colTypes)[rv$ord_factor]
-    
-    palettes_factnonord<-mapply(moma.colors,
-                                possible_palettes_facets[1:sum(!rv$ord_factor[rv$colTypes=="factor"])],
-                                n=rv$ntype_facets,
+      rv$colTypes <- factor(rv$colTypes,
+                            levels = c("character", "logic", "factor", "numeric")
+      )
+      
+      
+      palettes_factord<- mapply(moma.colors,
+                                possible_palettes_gradient[1:sum(rv$ord_factor)],
+                                n=rv$ntype_ord,
                                 SIMPLIFY = FALSE,
                                 USE.NAMES = FALSE)
-    names(palettes_factnonord)<-names(rv$colTypes)[!rv$ord_factor&rv$colTypes=="factor"]
+      names(palettes_factord)<-names(rv$colTypes)[rv$ord_factor]
+      
+      palettes_factnonord<-mapply(moma.colors,
+                                  possible_palettes_facets[1:sum(!rv$ord_factor[rv$colTypes=="factor"])],
+                                  n=rv$ntype_facets,
+                                  SIMPLIFY = FALSE,
+                                  USE.NAMES = FALSE)
+      names(palettes_factnonord)<-names(rv$colTypes)[!rv$ord_factor&rv$colTypes=="factor"]
+      
+      palettes_logic<-possible_palettes_neutral[1:sum(rv$colTypes=="logic")]
+      names(palettes_logic)<-names(rv$colTypes)[rv$colTypes=="logic"]
+      
+      rv$palettes<-append(append(palettes_factnonord,palettes_factord),palettes_logic)
+    }
     
-    palettes_logic<-possible_palettes_neutral[1:sum(rv$colTypes=="logic")]
-    names(palettes_logic)<-names(rv$colTypes)[rv$colTypes=="logic"]
-    
-    rv$palettes<-append(append(palettes_factnonord,palettes_factord),palettes_logic)
-  })
+    })
   
   output$AllAlright<-reactive({
     return(rv$AllAlright)
@@ -418,7 +486,7 @@ server<-function(input,output, session){
           rownames(rv$table)<-"Number \n of samples"
         }
         else{
-          rv$table<-rv$table%>%select(n)%>%t()
+          rv$table<-rv$table%>%dplyr::select(n)%>%t()
           colnames(rv$table)<-c(rv$levels[[var]],"NA")
           rownames(rv$table)<-"Number \n of samples"
         }
@@ -434,7 +502,7 @@ server<-function(input,output, session){
           rownames(rv$table)<-"Number \n of samples"
         }
         else{
-          rv$table<-rv$table%>%select(n)%>%t()
+          rv$table<-rv$table%>%dplyr::select(n)%>%t()
           colnames(rv$table)<-c(rv$levels[[var]],"NA")
           rownames(rv$table)<-"Number \n of samples"
         }
@@ -446,7 +514,7 @@ server<-function(input,output, session){
         )
         rv$table<-data.frame(
           as.array(
-            summary(rv$df_post%>%select(.data[[var]])%>%pull())))%>%
+            summary(rv$df_post%>%dplyr::select(.data[[var]])%>%pull())))%>%
           column_to_rownames("Var1")%>%t()
         rownames(rv$table)<-"values"
       }
@@ -467,7 +535,7 @@ server<-function(input,output, session){
             column_to_rownames(var1)
         }
         else{
-          rv$table<-rv$table%>%select(-all_of(var1))%>%t()
+          rv$table<-rv$table%>%dplyr::select(-all_of(var1))%>%t()
           colnames(rv$table)<-c(rv$levels[[var1]],"NA")
         }
         
@@ -487,7 +555,7 @@ server<-function(input,output, session){
             column_to_rownames(var1)
         }
         else{
-          rv$table<-rv$table%>%select(-all_of(var1))%>%t()
+          rv$table<-rv$table%>%dplyr::select(-all_of(var1))%>%t()
           colnames(rv$table)<-c(rv$levels[[var1]],"NA")
         }
       }
@@ -506,7 +574,7 @@ server<-function(input,output, session){
             column_to_rownames(var1)
         }
         else{
-          rv$table<-rv$table%>%select(-all_of(var1))%>%t()
+          rv$table<-rv$table%>%dplyr::select(-all_of(var1))%>%t()
           colnames(rv$table)<-c(rv$levels[[var1]],"NA")
         }
       }
@@ -521,8 +589,8 @@ server<-function(input,output, session){
           do.call(
             rbind,
             tapply(
-              rv$df_post%>%select(.data[[var2]])%>%pull(),
-              rv$df_post%>%select(.data[[var1]])%>%pull(),
+              rv$df_post%>%dplyr::select(.data[[var2]])%>%pull(),
+              rv$df_post%>%dplyr::select(.data[[var1]])%>%pull(),
               summary)
           )
         )
@@ -540,7 +608,7 @@ server<-function(input,output, session){
             column_to_rownames(var1)
         }
         else{
-          rv$table<-rv$table%>%select(-all_of(var1))%>%t()
+          rv$table<-rv$table%>%dplyr::select(-all_of(var1))%>%t()
           colnames(rv$table)<-c(rv$levels[[var1]],"NA")
         }
       }
@@ -557,7 +625,7 @@ server<-function(input,output, session){
             column_to_rownames(var1)
         }
         else{
-          rv$table<-rv$table%>%select(-all_of(var1))%>%t()
+          rv$table<-rv$table%>%dplyr::select(-all_of(var1))%>%t()
           colnames(rv$table)<-c(rv$levels[[var1]],"NA")
         }
       }
@@ -572,8 +640,8 @@ server<-function(input,output, session){
           do.call(
             rbind,
             tapply(
-              rv$df_post%>%select(.data[[var2]])%>%pull(),
-              rv$df_post%>%select(.data[[var1]])%>%pull(),
+              rv$df_post%>%dplyr::select(.data[[var2]])%>%pull(),
+              rv$df_post%>%dplyr::select(.data[[var1]])%>%pull(),
               summary)
           )
         )
@@ -593,7 +661,7 @@ server<-function(input,output, session){
             column_to_rownames(var1)
         }
         else{
-          rv$table<-rv$table%>%select(-all_of(var1))%>%t()
+          rv$table<-rv$table%>%dplyr::select(-all_of(var1))%>%t()
           colnames(rv$table)<-c(rv$levels[[var1]],"NA")
         }
       }
@@ -606,8 +674,8 @@ server<-function(input,output, session){
           do.call(
             rbind,
             tapply(
-              rv$df_post%>%select(.data[[var2]])%>%pull(),
-              rv$df_post%>%select(.data[[var1]])%>%pull(),
+              rv$df_post%>%dplyr::select(.data[[var2]])%>%pull(),
+              rv$df_post%>%dplyr::select(.data[[var1]])%>%pull(),
               summary)
           )
         )
@@ -621,14 +689,14 @@ server<-function(input,output, session){
             rbind,
             tapply(
               rv$df_post%>%
-                select(all_of(c(var1,var2)))%>%
+                dplyr::select(all_of(c(var1,var2)))%>%
                 pivot_longer(c(var1,var2))%>%
-                select(value)%>%
+                dplyr::select(value)%>%
                 pull(),
               rv$df_post%>%
-                select(all_of(c(var1,var2)))%>%
+                dplyr::select(all_of(c(var1,var2)))%>%
                 pivot_longer(c(var1,var2))%>%
-                select(name)%>%
+                dplyr::select(name)%>%
                 pull(),
               summary)
           )

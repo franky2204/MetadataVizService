@@ -44,7 +44,7 @@ ui <- fluidPage(
   conditionalPanel(
       "output.fileUploaded",
       fluidRow(
-        fileInput("file", "Upload your file",
+        fileInput("file1", "Upload your file",
                   multiple = FALSE,
                   accept = c(
                     ".txt",
@@ -57,6 +57,8 @@ ui <- fluidPage(
       ),
       fluidRow(
         column(
+          offset=1,
+          width = 2,
           actionButton("manually",
                        label = "Manually adjust",
                        class = "btn btn-secondary",
@@ -90,16 +92,13 @@ ui <- fluidPage(
           ),
           uiOutput("colTypeInputs"),
           align="left",
-          width = 3,
-          #offset = 1
-          style = "padding:2em;"
         ),
         column(
+          width=8,
           wellPanel(
             DTOutput("df_table"),
             style="overflow-x: scroll"
           ),
-          width=9,
           style = "padding:1em;"
         )
         
@@ -116,36 +115,54 @@ ui <- fluidPage(
   ),
   conditionalPanel(
     "input.load!=0 && output.AllAlright",
-    #h1("Preprocessing"),
     fluidRow(
       column(
-        uiOutput("variables_input"),
         width = 2,
+        uiOutput("variables_input"),
         style = "margin:1em;"
       ),
       column(
+        width = 9,
         fluidRow(
-          wellPanel(
-            fluidRow(downloadButton("downloadPlot","",style = "margin-top:1em;
-                                                        margin-right:1em;
-                                                        float: right;")),
-            fluidRow(plotOutput(outputId = "distPlot")),
-            fluidRow(actionButton("refresh","Other",class="red-button",style ="margin:1em;")),
-            style="width:100%;"
+          column(
+            width=8,
+            wellPanel(
+              fluidRow(plotOutput(outputId = "distPlot")),
+              style="width:100%;"
+            )
           ),
-          wellPanel(
-            tableOutput(outputId = "Table"),
-            class = "fit-to-content",
-            style="max-width:100%;overflow-x: scroll"
-          ),
-          wellPanel(
-           # verbatimTextOutput()
-          ),
-          wellPanel(
-            p("Altre cose altre")
+          column(
+            width=3,
+            fluidRow(
+              column(
+                width=2,
+                downloadButton("downloadPlot",""),
+                offset = 8
+              ),
+              column(
+                width=2,
+                actionButton("refresh","Other")
+              )
+            ),
+            fluidRow(
+              
+            )
           )
         ),
-        width = 8,
+        fluidRow(
+          wellPanel(
+          tableOutput(outputId = "Table"),
+          class = "fit-to-content",
+          style="max-width:100%;overflow-x: scroll"
+        ),
+        wellPanel(
+          # verbatimTextOutput()
+        ),
+        wellPanel(
+          p("Altre cose altre")
+        )
+        )
+        
         #style = "margin:1em;"
       )
     )

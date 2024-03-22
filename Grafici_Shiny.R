@@ -38,8 +38,6 @@ golden<-(1+sqrt(5))/2
 
 ndata<-nrow(df)
 
-
-
 change_type<-function(variable) {
   column_class <- classes[variable]
   if (column_class == "character") {
