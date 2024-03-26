@@ -127,33 +127,45 @@ ui <- fluidPage(
           column(
             width=8,
             wellPanel(
-              fluidRow(plotOutput(outputId = "distPlot")),
+              plotOutput(outputId = "distPlot"),
               style="width:100%;"
             )
           ),
           column(
-            width=3,
+            width=4,
             fluidRow(
               column(
-                width=2,
-                downloadButton("downloadPlot",""),
-                offset = 8
+                width=10,
+                p("Pie chart showing the percentage of data subdivided by chr"),
               ),
               column(
                 width=2,
-                actionButton("refresh","Other")
+                downloadButton("downloadPlot","")
               )
             ),
             fluidRow(
-              
-            )
+              column(width=7,
+                     p("Next:")),
+              column(width=5,
+                     actionButton("refresh","Other",style="float: right;"))
+              ),
+            fluidRow(
+              column(
+                width=12,
+                wellPanel(
+                  plotOutput(outputId = "distPlot_next",width="100%",height="100%"),
+                  style="width: 100%; height: 225px"
+                )
+              ),
+              style="bottom: 0px;"
+            ),
+            style="height: 100%;"
           )
         ),
         fluidRow(
           wellPanel(
           tableOutput(outputId = "Table"),
-          class = "fit-to-content",
-          style="max-width:100%;overflow-x: scroll"
+          style="max-width:100%;overflow-x: scroll; width: fit-content;"
         ),
         wellPanel(
           # verbatimTextOutput()

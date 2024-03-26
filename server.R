@@ -161,8 +161,6 @@ server<-function(input,output, session){
     }
   })
   
-  observeEvent(input$changed,{print(input$changed)})
-  
   # show tabella
   output$df_table <- renderDataTable(DT::datatable(rv$df_pre,
                                                    callback = JS(callback),
@@ -189,7 +187,8 @@ server<-function(input,output, session){
     tagList(
       lapply(1:rv$ncol, function(i) {
         pickerInput(paste0("colType_", i),
-                    width = "fit",
+                    #width = "fit",
+                    inline = FALSE,
                     label = paste(columnNames[i],": ",sep=""),
                     choices = c("", "character", "numeric", "factor"),
                     selected = rv$colTypes[i]
@@ -711,6 +710,11 @@ server<-function(input,output, session){
   # plotta grafici
   output$distPlot <- renderPlot({
     return(rv$plot[[numbers::mod(rv$plot_n, length(rv$plot))+1]])
+  },bg="transparent")
+  
+  # plotta grafico dopo
+  output$distPlot_next <- renderPlot({
+    return(rv$plot[[numbers::mod((rv$plot_n+1), length(rv$plot))+1]])
   },bg="transparent")
   
   # printa tabella
