@@ -1,64 +1,100 @@
 :root{
-  --lightgrey: #E2E2E2;
-  --darkblue: #19323C;
-  --raspberry: #A93F55;
-  --fontbody: "Oriya Sangam MN";
-  --fontlabel: "PT Sans";
-  --fontaccent: "SignPainter";
-  --fontmono: "PT Mono";
+  --light: #EBE9EA;
+  --orange: #D69652;
+  --darkorange: #C36931;
+  --dark: #404643;
+  --green: #929282;
+  --fonttitle: "Merriweather Sans";
+  --fontlabel: "Martel Sans";
+  --fonttext: "Karma";
 }
 
-input[type=checkbox] {accent-color: var(--raspberry);}
-input[type=label] {font-family:var(--fontlabel)}
-input {accent-color: var(--raspberry);}
-
-.label-default {
-  background-color: var(--raspberry);
+.label-default{
+  background-color: var(--dark);
 }
+.bg-default{
+  background-color: var(--dark);
+}
+.dropdown-menu>.active>a{
+  background-color: var(--orange);
+}
+.pretty input:checked~.state.p-primary label:after, .pretty.p-toggle .state.p-primary label:after {
+    background-color: var(--orange) !important;
+}
+#TODO: fix this part. TVB anche se mi lavi, anche se non te lo meriti
+.form-control{
+
+}
+
+/*input[type=checkbox] {accent-color: var(--darkorange);}
+input[type=material-switch] {accent-color: var(--darkorange);}
+input[type=label] {font-family: var(--fontlabel)}
+input {accent-color: var(--darkorange);}*/
+
 
 body{
-  background-color: var(--lightgrey);
+  background-color: var(--light);
   margin: 0;
-  font-size: 18px;
+  font-family: var(--fonttext);
+  font-size: 16px;
+  line-height: 1.6;
 }
 
 h1{
-  font-family: var(--fontaccent);
-  font-size:35px;
-  color: var(--lightgrey)
+  font-family: var(--fonttitle);
+  font-weight: 800;
+  font-size: 4.5em;
 }
 
 h2{
-  font-family: var(--fontaccent);
-  font-size:35px;
-  color: var(--lightgrey)
+  font-family: var(--fonttitle);
+  font-weight: 600;
+  font-size: 2.6em;
+}
+
+h3{
+  font-family: var(--fonttitle);
+  font-size: 16px;
+}
+
+h4{
+  font-family: var(--fontlabel);
+  font-weight: 600;
+  font-size: 16px;
+}
+
+h5{
+  font-family: var(--fontlabel);
+  font-weight: 300;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+p{
+  font-family: var(--fonttext);
+  font-weight: 400;
+  font-size: 13px;
 }
 
 .container-fluid{
-  background-color: var(--lightgrey);
+  background-color: var(--light);
   width: 100%;
   margin: 0;
   padding: 0;
 }
 
 .container{
-  background-color: var(--lightgrey);
+  background-color: var(--light);
   width: 100%;
   margin: 0;
   padding: 0;
 }
 
-/*.row{
-  margin:0;
-  justify-content: space-between;
-}*/
-
-
 .well{
   background: white;
   padding: 3%;
   border-radius: 6px;
-  box-shadow: 6px 6px 12px #C5C5C5;
+  box-shadow: 6px 6px 12px var(--ligth);
   overflow: hidden;
   width: 100%;
   justify-content: space-between;
@@ -78,15 +114,45 @@ h2{
   box-shadow: 6px 6px 12px #C5C5C5;
 }
 
+.headerMirri{
+  background-color: var(--light);
+  top: 0;
+  left: 0;
+  margin-bottom: 1em;
+  width: 100%;
+  height: 10%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  text-align: center;
+  box-shadow: 6px 6px 12px #C5C5C5;
+}
+
+.footerMirri{
+  font-family: var(--fontlabel);
+  color: var(--light);
+  background-color: var(--dark);
+  bottom: 0;
+  left: 0;
+  margin-top: 1em;
+  width: 100%;
+  height: 20%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  text-align: center;
+  box-shadow: 6px 6px 12px #C5C5C5;
+}
+
 .progress-bar {
   float: left;
   width: 0%;
   height: 100%;
   font-size: 13px;
   line-height: 21px;
-  color: var(--lightgrey);
+  color: #EBE9EA;
   text-align: center;
-  background-color: var(--darkblue);
+  background-color: var(--darkorange);
   -webkit-box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.15);
   box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.15);
   -webkit-transition: width 0.6s ease;

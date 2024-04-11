@@ -17,7 +17,6 @@ ui <- fluidPage(
         });"
     )
   ),
-  #theme="Cerulean",
   theme_QBio,
   #includeCSS("bootstrap.css"),
   headerPanel("Preprocessing"),
@@ -44,7 +43,7 @@ ui <- fluidPage(
   conditionalPanel(
       "output.fileUploaded",
       fluidRow(
-        fileInput("file1", "Upload your file",
+        fileInput("file1", "Upload another file",
                   multiple = FALSE,
                   accept = c(
                     ".txt",
@@ -69,8 +68,7 @@ ui <- fluidPage(
             materialSwitch(
               inputId = "header",
               label = "Header",
-              value = FALSE,
-              status = "default"
+              value = FALSE
             ),
             textInput("sep",
                       "Separator",
@@ -85,9 +83,8 @@ ui <- fluidPage(
                                  "Double Quote" = '"',
                                  "Single Quote" = "'"
                                ),
-                               selected = '"',
-                               status = "danger"
-                               
+                               selected = '"'
+
             )
           ),
           uiOutput("colTypeInputs"),
@@ -178,5 +175,6 @@ ui <- fluidPage(
         #style = "margin:1em;"
       )
     )
-  )
+  ),
+  footerPanel()
 )
