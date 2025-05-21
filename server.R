@@ -15,7 +15,9 @@ server<-function(input,output, session){
     ord_factor =NULL,
     palettes=NULL,
     plot_n=1,
-    plot=NULL
+    plot=NULL,
+    title=NULL,
+    description=NULL
   )
   
   # condition to show the table adjustments buttons
@@ -222,7 +224,7 @@ server<-function(input,output, session){
           rv$colTypes[i]<-colTypeInput
           if (colTypeInput == "factor") {
             var<-rv$variables[i]
-            n_fact<-rv$df_pre%>%pull(all_of(var))%>%unique()%>%length()
+            n_fact<-rv$df_pre%>%pull(i)%>%unique()%>%length()
             if(n_fact<=10){
               levels_ord <- rv$levels[[i]]
               if (is.null(levels_ord)) {
@@ -352,7 +354,7 @@ server<-function(input,output, session){
         ),
       function(x){unique(na.omit(x))}
     )
-    rv$colTypes[rv$colTypes == "factor" & sapply(rv$df_pre, function(v) {
+    rv$colTypes[rv$colTypes == "factor" & rv$ord_factor & sapply(rv$df_pre, function(v) {
       length(unique(v))
     }) == 2] <- "logic"
     
@@ -402,23 +404,28 @@ server<-function(input,output, session){
                             levels = c("character", "logic", "factor", "numeric")
       )
       
-      
       palettes_factord<- mapply(moma.colors,
                                 possible_palettes_gradient[1:sum(rv$ord_factor)],
                                 n=rv$ntype_ord,
                                 SIMPLIFY = FALSE,
                                 USE.NAMES = FALSE)
-      names(palettes_factord)<-names(rv$colTypes)[rv$ord_factor]
+      if(length(rv$colTypes[rv$ord_factor & rv$colTypes=="factor"])>0){
+        names(palettes_factord)<-names(rv$colTypes)[rv$ord_factor]
+      }
       
       palettes_factnonord<-mapply(moma.colors,
                                   possible_palettes_facets[1:sum(!rv$ord_factor[rv$colTypes=="factor"])],
                                   n=rv$ntype_facets,
                                   SIMPLIFY = FALSE,
                                   USE.NAMES = FALSE)
-      names(palettes_factnonord)<-names(rv$colTypes)[!rv$ord_factor&rv$colTypes=="factor"]
+      if(length(rv$colTypes[!rv$ord_factor&rv$colTypes=="factor"])>0){
+        names(palettes_factnonord)<-names(rv$colTypes)[!rv$ord_factor&rv$colTypes=="factor"]
+      }
       
       palettes_logic<-possible_palettes_neutral[1:sum(rv$colTypes=="logic")]
-      names(palettes_logic)<-names(rv$colTypes)[rv$colTypes=="logic"]
+      if(length(rv$colTypes[rv$colTypes=="logic"])>0){
+        names(palettes_logic)<-names(rv$colTypes)[rv$colTypes=="logic"]
+      }
       
       rv$palettes<-append(append(palettes_factnonord,palettes_factord),palettes_logic)
     }
@@ -474,6 +481,10 @@ server<-function(input,output, session){
           colnames(rv$table)<-c(rv$levels[[var]],"NA")
           rownames(rv$table)<-"Number \n of samples"
         }
+        rv$title<-list(paste("Bar plot showing the distribution of data by",var),
+                       paste("Pie chart showing the distribution of data by",var))
+        rv$description<-list("The height of each bar corresponds to the number of samples contained in the group. Choose barplots for precise comparisons and pie charts for illustrating proportions in a whole.",
+                             "Each slice represents a category and its size is proportionial to the number of samples contained in the group. Choose barplots for precise comparisons and pie charts for illustrating proportions in a whole.")
       }
       else if(rv$colTypes[var]=="factor"&!rv$ord_factor[var]){
         rv$plot<-list(waffle_factor_nonord(rv$df_post,var,rv$palettes,rv$ndata,rv$levels),
@@ -489,6 +500,10 @@ server<-function(input,output, session){
           colnames(rv$table)<-c(rv$levels[[var]],"NA")
           rownames(rv$table)<-"Number \n of samples"
         }
+        rv$title<-list(paste("Waffle chart showing the distribution of data subdivided by",var),
+                       paste("Bar plot showing the distribution of data subdivided by",var))
+        rv$description<-list("Each square represents a unit and the colors are assigned according to the belonging to groups of samples, making it easy to see proportions at a glance.",
+                             "The length of each bar corresponds to the number of samples contained in the group. Choose barplots for precise comparisons among groups.")
         
       }
       else if(rv$colTypes[var]=="factor"&rv$ord_factor[var]){
@@ -505,6 +520,11 @@ server<-function(input,output, session){
           colnames(rv$table)<-c(rv$levels[[var]],"NA")
           rownames(rv$table)<-"Number \n of samples"
         }
+        rv$title<-list(paste("Bar plot showing the distribution of data subdivided by",var),
+                       paste("Bar plot showing the distribution of data subdivided by",var,"stucked"))
+        rv$description<-list("The height of each bar corresponds to the number of samples contained in the group. Choose side-by-syde barplots for precise comparisons among groups.",
+                             "The height of each bar corresponds to the number of samples contained in the group. Choose stucked barplots to show proportions between groups.")
+        
       }
       else if(rv$colTypes[var]=="numeric"){
         rv$plot<-list(hist_numeric(rv$df_post,var),
@@ -516,7 +536,15 @@ server<-function(input,output, session){
             summary(rv$df_post%>%dplyr::select(.data[[var]])%>%pull())))%>%
           column_to_rownames("Var1")%>%t()
         rownames(rv$table)<-"values"
+        rv$title<-list(paste("Histogram of",var,"values"),
+                       paste("Density of",var,"values"),
+                       paste("Boxplot of",var,"values"))
+        rv$description<-list("Each bar's height reflects the number of samples with values lying in that bin. If values are discrete, histograms are ideal, expecially for smaller sample sizes, since they show a more accurate representation of the distribution.",
+                             "Density plots provide a smoothed estimate of the distribution of the values between samples, especially useful with larger datasets. If you need to see the nuances of the distribution, such as small peaks and valleys, density plots are preferable.",
+                             "Concise summary of a dataset's distribution, focusing on central tendency and variability. Median, quartiles, and potential outliers can be seen.")
+        
       }
+      
     }
     else if (length(var)==2){
       var1<-as.character(var[1])
@@ -537,6 +565,11 @@ server<-function(input,output, session){
           rv$table<-rv$table%>%dplyr::select(-all_of(var1))%>%t()
           colnames(rv$table)<-c(rv$levels[[var1]],"NA")
         }
+        rv$title<-list(paste("Barplot of",var1,"colored according to",var2),
+                       paste("Barplot of",var2,"colored according to",var1))
+        rv$description<-list(paste("The plot represents the number of samples in each factor of",var1,"divided in two colors according to",var2),
+                             paste("The plot represents the number of samples in each factor of",var2,"divided in two colors according to",var1)
+        )
         
       }
       else if(rv$colTypes[var1]=="logic" &
@@ -557,6 +590,15 @@ server<-function(input,output, session){
           rv$table<-rv$table%>%dplyr::select(-all_of(var1))%>%t()
           colnames(rv$table)<-c(rv$levels[[var1]],"NA")
         }
+        rv$title<-list(paste("Barplot of",var1,"colored according to",var2,"stacked"),
+                       paste("Barplot of",var1,"colored according to",var2,"dodged"),
+                       paste("Barplot of",var2,"colored according to",var1,"stacked"),
+                       paste("Barplot of",var2,"colored according to",var1,"dodged"))
+        rv$description<-list(paste("The plot represents the number of samples in each factor of",var1,"divided in two colors according to",var2),
+                             paste("The plot represents the number of samples in each factor of",var1,"divided in two colors according to",var2),
+                             paste("The plot represents the number of samples in each factor of",var2,"divided in two colors according to",var1),
+                             paste("The plot represents the number of samples in each factor of",var2,"divided in two colors according to",var1)
+        )
       }
       else if(rv$colTypes[var1]=="logic" &
               rv$colTypes[var2]=="factor" & rv$ord_factor[var2]){
@@ -576,6 +618,10 @@ server<-function(input,output, session){
           rv$table<-rv$table%>%dplyr::select(-all_of(var1))%>%t()
           colnames(rv$table)<-c(rv$levels[[var1]],"NA")
         }
+        rv$title<-list(paste("Barplot of",var1,"colored according to",var2,"stacked"),
+                       paste("Barplot of",var1,"colored according to",var2,"dodged"),
+                       paste("Barplot of",var2,"colored according to",var1,"stacked"),
+                       paste("Barplot of",var2,"colored according to",var1,"dodged"))
       }
       else if(rv$colTypes[var1]=="logic" &
               rv$colTypes[var2]=="numeric"){
@@ -593,12 +639,18 @@ server<-function(input,output, session){
               summary)
           )
         )
+        rv$title<-list(paste("Ridgeline plot of",var2,"according to",var1),
+                       paste("Boxplots of",var2,"subdivided according to",var1),
+                       paste("Histograms of",var2,"colored according to",var1,"stucked"),
+                       paste("Histograms of",var2,"subdivided and colored according to",var1))
       }
       else if(rv$colTypes[var1]=="factor" & !rv$ord_factor[var1] &
               rv$colTypes[var2]=="factor" & !rv$ord_factor[var2]){
         rv$plot<-list(barplot_factornonord_factornonord(rv$df_post,var1,var2,rv$palettes),
                       barplot_factornonord_factornonord(rv$df_post,var2,var1,rv$palettes)
         )
+        rv$title<-list(paste("Barplot of",var1,"colored according to",var2),
+                       paste("Barplot of",var2,"colored according to",var1))
         rv$table<-rv$df_post%>%
           count(.data[[var1]],.data[[var2]])%>%
           pivot_wider(names_from = var2,values_from = n)
@@ -616,6 +668,8 @@ server<-function(input,output, session){
         rv$plot<-list(barplot_factornonord_factorord(rv$df_post,var1,var2,rv$palettes),
                       barplot_factorord_factornonord(rv$df_post,var1,var2,rv$palettes)
         )
+        rv$title<-list(paste("Barplot of",var1,"colored according to",var2,"stacked"),
+                       paste("Barplot of",var2,"colored according to",var1,"stacked"))
         rv$table<-rv$df_post%>%
           count(.data[[var1]],.data[[var2]])%>%
           pivot_wider(names_from = var2,values_from = n)
@@ -635,6 +689,10 @@ server<-function(input,output, session){
                       histogram_factornonord_num_stack(rv$df_post,var1,var2,rv$palettes),
                       boxplot_factornonord_num(rv$df_post,var1,var2,rv$palettes)
         )
+        rv$title<-list(paste("Ridgeline plot of",var2,"according to",var1),
+                       paste("Histograms of",var2,"subdivided and colored according to",var1),
+                       paste("Histograms of",var2,"colored according to",var1,"stacked"),
+                       paste("Boxplots of",var2,"subdivided according to",var1))
         rv$table<-data.frame(
           do.call(
             rbind,
@@ -652,6 +710,10 @@ server<-function(input,output, session){
                       barplot_factord_factord_stack(rv$df_post,var1,var2,rv$palettes),
                       barplot_factord_factord_stack(rv$df_post,var2,var1,rv$palettes)
         )
+        rv$title<-list(paste("Barplot of",var1,"colored according to",var2,"dodged"),
+                       paste("Barplot of",var2,"colored according to",var1,"dodged"),
+                       paste("Barplot of",var1,"colored according to",var2,"stacked"),
+                       paste("Barplot of",var2,"colored according to",var1,"stacked"))
         rv$table<-rv$df_post%>%
           count(.data[[var1]],.data[[var2]])%>%
           pivot_wider(names_from = var2,values_from = n)
@@ -669,6 +731,8 @@ server<-function(input,output, session){
         rv$plot<-list(density_factorord_num(rv$df_post,var1,var2,rv$palettes),
                       boxplot_factorord_num(rv$df_post,var1,var2,rv$palettes)
         )
+        rv$title<-list(paste("Ridgeline plot of",var2,"according to",var1),
+                       paste("Boxplots of",var2,"subdivided according to",var1))
         rv$table<-data.frame(
           do.call(
             rbind,
@@ -683,6 +747,8 @@ server<-function(input,output, session){
         rv$plot<-list(scatter_num_num(rv$df_post,var1,var2,rv$palettes),
                       scatter_num_num(rv$df_post,var2,var1,rv$palettes)
         )
+        rv$title<-list(paste("Scatterplot of",var2,"vs",var1),
+                       paste("Scatterplot of",var1,"vs",var2))
         rv$table<-data.frame(
           do.call(
             rbind,
@@ -702,10 +768,21 @@ server<-function(input,output, session){
         )
       }
     }
-    else{rv$plot<-NULL}
+    else{rv$plot<-NULL
+    rv$title<-NULL
+    rv$table<-NULL}
+
   })
   
-  # plotta descrizione
+  # scrive titolo
+  output$Title <- renderText({
+    return(rv$title[[numbers::mod(rv$plot_n, length(rv$title))+1]])
+  })
+  
+  # scrive descrizione
+  output$Description<-renderText({
+    return(rv$description[[numbers::mod(rv$plot_n, length(rv$plot))+1]])
+  })
   
   # plotta grafici
   output$distPlot <- renderPlot({
@@ -714,13 +791,20 @@ server<-function(input,output, session){
   
   # plotta grafico dopo
   output$distPlot_next <- renderPlot({
-    return(rv$plot[[numbers::mod((rv$plot_n+1), length(rv$plot))+1]])
+    return(rv$plot[[numbers::mod((rv$plot_n+1), length(rv$plot))+1]]+
+             theme(legend.position = "none",
+                   axis.text = element_blank(),
+                   axis.title = element_blank(),
+                   axis.line = element_blank(),
+                   axis.ticks = element_blank()
+                   ))
   },bg="transparent")
   
   # printa tabella
   output$Table <- renderTable({
     return(rv$table)
   }, rownames = TRUE)
+  
   
   output$downloadPlot <- downloadHandler(
     filename = function() {

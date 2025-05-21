@@ -1,0 +1,58 @@
+.red-button {
+ background-color: #622532;
+ border: solid transparent;
+ border-radius: 16px;
+ border-width: 0 0 4px;
+ box-sizing: border-box;
+ color: var(--lightgrey);
+ cursor: pointer;
+ margin:10px;
+ font-size: 15px;
+ font-weight: 700;
+ letter-spacing: .8px;
+ line-height: 20px;
+ outline: none;
+ overflow: visible;
+ padding: 10px 15px;
+ text-align: center;
+ text-transform: uppercase;
+ touch-action: manipulation;
+ transform: translateZ(0);
+ transition: filter .2s;
+ user-select: none;
+ -webkit-user-select: none;
+ vertical-align: middle;
+ white-space: nowrap;
+ float: right;
+}
+
+.red-button:after {
+ background-clip: padding-box;
+ background-color: var(--raspberry);
+ border: solid transparent;
+ border-radius: 16px;
+ border-width: 0 0 4px;
+ bottom: -4px;
+ content: "";
+ left: 0;
+ position: absolute;
+ right: 0;
+ top: 0;
+ z-index: -1;
+}
+
+.red-button:main, .red-button:focus {
+ user-select: auto;
+}
+
+.red-button:hover {
+ filter: brightness(1.1);
+ color: var(--lightgrey);
+ background-color: #622532;
+ border-color: #622532;
+}
+
+.red-button:active {
+ border-width: 0 0 0px;
+ margin-top: 14px;
+}

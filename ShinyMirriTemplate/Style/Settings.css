@@ -41,9 +41,9 @@ body{
 }
 
 h1{
-  font-family: var(--fonttitle);
+  font-family: SignPainter;
   font-weight: 800;
-  font-size: 4.5em;
+  font-size: 3em;
 }
 
 h2{
@@ -94,6 +94,7 @@ p{
   background: white;
   padding: 3%;
   border-radius: 6px;
+  margin:0;
   box-shadow: 6px 6px 12px var(--ligth);
   overflow: hidden;
   width: 100%;
