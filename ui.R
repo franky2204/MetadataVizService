@@ -8,6 +8,17 @@ source("Univar_functs.R")
 source("Bivar_functs.R")
 
 setwd(".")
+
+
+
+
+
+
+
+
+
+
+
 ui <- fluidPage(
   tags$head(
     tags$script(
@@ -90,8 +101,6 @@ ui <- fluidPage(
           p("Altre cose altre")
         )
         )
-        
-        #style = "margin:1em;"
       )
     )
   ),
