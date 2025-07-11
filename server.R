@@ -32,10 +32,10 @@ server <- function(input, output, session) {
 
       has_letters <- any(grepl("[A-Za-z]", col_data_no_na))
 
-      if (all_numeric && !has_letters) {
-        "numeric"
-      } else if (n_unique < 10) {
+      if (n_unique < 5) {
         "factor"
+      } else if (all_numeric && !has_letters) {
+        "numeric"
       } else {
         "character"
       }

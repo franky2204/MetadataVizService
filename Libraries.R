@@ -17,6 +17,8 @@ if(!require("sortable")) install.packages("scales", dependencies = TRUE)
 if(!require("igraph")) install.packages("igraph", dependencies = TRUE)
 if(!require("ggraph")) install.packages("ggraph", dependencies = TRUE)
 
+if(!require("waffle")) install.packages("waffle", dependencies = TRUE)
+
 
 
 
